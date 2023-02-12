@@ -108,7 +108,15 @@ const main = async () => {
     index += 1;
   };
 
-  timer = setInterval(loop, 10_000);
+  timer = setInterval(
+    loop,
+    Number(
+      await input.text(
+        'Please enter the interval (in seconds, default: 10)',
+        { default: '10' },
+      ),
+    ) * 1_000,
+  );
   loop();
 };
 
