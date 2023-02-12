@@ -77,9 +77,12 @@ const main = async () => {
   let index = 0;
   let timer;
 
+  const message = await input.text('Please enter the message ( markdown is available, use "\\n" to break lines ) :');
+
   const loop = async () => {
     if (index >= ids.length) {
       clearInterval(timer);
+      timelog('All ids have been processed.');
       process.exit();
       return;
     }
@@ -90,9 +93,11 @@ const main = async () => {
     const sendMessageResult = await client.sendMessage(
       id,
       {
-        message: `[${
-          dayjs().format('YYYY-MM-DD HH:mm:ss')
-        }] Hello! telegram-bulk-messages actived!`,
+        message: message
+          .split('\\\\n')
+          .map((str) => str.replace(/\\n/g, '\n'))
+          .join('\\\\n'),
+        parseMode: 'markdown',
       },
     )
       .catch((err) => err);
@@ -112,7 +117,7 @@ const main = async () => {
     loop,
     Number(
       await input.text(
-        'Please enter the interval (in seconds, default: 10)',
+        'Please enter the interval (in seconds)',
         { default: '10' },
       ),
     ) * 1_000,
